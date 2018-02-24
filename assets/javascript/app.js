@@ -1,196 +1,222 @@
-$(document).ready(function () {
-    var options = [
-        {
-            question: "Pupusas, handmade thick stuffed corn tortillas, are a traditional dish from what country?", 
-            choice: ["Ethiopia", "El Salvadore", "Peru", "Guatamala"],
-            answer: 1,
-            photo: "assets/images/pupusas.jpg"
-         },
-         {
-             question: "What popular soda beverage was originally developed as a mixer for whiskey?", 
-            choice: ["Mountain Dew", "Sprite", "7-UP", "Coke"],
-            answer: 0,
-            photo: "assets/images/mtdew.gif"
-         }, 
-         {
-             question: "Kopi luwak is a very expensive type of what?", 
-            choice: ["Spice", "Caviar", "Coffee", "Rice variety" ],
-            answer: 2,
-            photo: "assets/images/coffee.gif"
-        }, 
-        {
-            question: "Which is not an ingredient in a Harvey Wallbanger cocktail?", 
-            choice: ["Orange Juice", "Vodka", "Sour Mix", "Galliano" ],
-            answer: 2,
-            photo: "assets/images/harvey.jpg"
-        }, 
-        {
-            question: "How many items are there in a Bakers' Dozen?", 
-            choice: ["12", "6", "24", "13" ],
-            answer: 3,
-            photo: "assets/images/dozen.jpg"
-        }, 
-        {
-            question: "What is the most widely eaten fish in the world?", 
-            choice: ["Tilapia", "Herring", "Sardine", "Tuna" ],
-            answer: 1,
-            photo: "assets/images/herring.jpg"
-        }, 
-        {
-            question: "Which fruit does not ripen once it has been picked?", 
-            choice: ["Banana", "Lemon", "Mango", "Apple" ],
-            answer: 1,
-            photo: "assets/images/lemon.gif"
-        }, 
-        {
-            question: "Which fruit contains the most protein per 100 calories?", 
-            choice: ["Guava", "Avocado", "Banana", "Blackberries" ],
-            answer: 0,
-            photo: "assets/images/guava.gif"
-        }];
+// starts when page loads
+window.onload = function() {
+    $("#start").click(run);
+    $("#start").html("Start")
+    $("#nextQuestion").click(nextQuestion);
+  
+    $("#questionArea").hide();
+    $("#buttonA").hide();
+    $("#buttonB").hide();
+    $("#buttonC").hide();
+    $("#buttonD").hide();
+    $("#nextQuestion").hide();
+  
+    $("#buttonA").click(buttonClicked);
+    $("#buttonB").click(buttonClicked);
+    $("#buttonC").click(buttonClicked);
+    $("#buttonD").click(buttonClicked);
+  
+    $("#nextQuestion").hide();
+  
+  };
+  
+  
+  // variables
+  var number = 30;
+  var start;
+  var displayQuestion = false;
+  var Correct = 0;
+  var incorrect = 0;
+  var noResponse = 9;
+  var currentQuestion = 0;
+  var questionCounter = 0;
+  
+  
+  var questions = [{
+      question: "Who is the two time?",
+      choices: ["A. LilyPichu", "B. Dr. Disrespect", "C. Shroud", "D. Summt1G"],
+      correctAnswer: 1,
+  }, 
+  {
+      question: "Who won the 1993 Blockbuster Games Tournament?",
+      choices: ["The Doc", "SodaPoppin", "Lirki", "TimTheTatman"],
+      correctAnswer: 0,
+  }, 
+  {
+      question: "Who won the 1994 Blockbuster Games Tournament?",
+      choices: ["Ninja", "Shroud", "Dr. Disrespect", "Faker"],
+      correctAnswer: 2,
+  }, 
+  {
+      question: "What does Dr. Disrespect drive?",
+      choices: ["1990 Lamborghini Diablo VT", "1995 Ford Mustang", "2017 Tesla Model S ", "1994 Acura Integra"],
+      correctAnswer: 0,
+  }, 
+  {
+      question: "What is on the Doc's face?",
+      choices: ["Awesomeness", "a fake mustache", "a mighty fine mustache", "Venomous Ethiopian Caterpillar"],
+      correctAnswer: 3,
+
+  },
+   {
+      question: "What is the Venomous Ethiopian Caterpillar on Doc's face called?",
+      choices: ["Champion", "The Hog", "Slick Daddy", "Summit"],
+      correctAnswer: 2,
+ 
+  }, 
+  {
+      question: "What is Dr. Disrespect's wife name?",
+      choices: ["Mrs. Pacwoman", "Mrs. Assasin", "Ms. Muppet", "Angela Rodriguez"],
+      correctAnswer: 1,
+
+  }, 
+  {
+      question: "What is Dr. Disrespects motto?",
+      choices: ["Violence, Speed, Momentum", "Respect Women", "Wassap Bros!", "Where's my cookie!?"],
+      correctAnswer: 0,
+
+  }, 
+  {
+      question: "Who's better with the sniper than Dr. Disrespect",
+      choices: ["Your mom", "Shroud", "Me", "Nobody!"],
+      correctAnswer: 3,
+
+  }];
+  
+  //shows start button an hides answer buttons and starts countdown
+  function run() {
     
-    var correctCount = 0;
-    var wrongCount = 0;
-    var unanswerCount = 0;
-    var timer = 20;
-    var intervalId;
-    var userGuess ="";
-    var running = false;
-    var qCount = options.length;
-    var pick;
-    var index;
-    var newArray = [];
-    var holder = [];
-    
-    
-    
-    $("#reset").hide();
-    //click start button to start game
-    $("#start").on("click", function () {
-            $("#start").hide();
-            displayQuestion();
-            runTimer();
-            for(var i = 0; i < options.length; i++) {
-        holder.push(options[i]);
+    start = setInterval(decrement, 1000);
+    $("#start").hide();
+    $("#buttonA").show();
+    $("#buttonB").show();
+    $("#buttonC").show();
+    $("#buttonD").show();
+  
+    displayCurrentQuestion();
+  }
+  
+  //timer
+  function decrement() {
+    number--;
+    $("#timer").html("<h2>" + number + "</h2>");
+    if (number === 0) {
+      clearInterval(start);
+      submitIncorrectAnswer();
     }
-        })
-    //timer start
-    function runTimer(){
-        if (!running) {
-        intervalId = setInterval(decrement, 1000); 
-        running = true;
-        }
+  }
+  
+  function buttonClicked(e){
+    
+    var value = $(this).attr("index");
+    
+    //correct answer chosens then counters go up or down.
+    if (value == questions[questionCounter].correctAnswer){
+      Correct++;
+      noResponse--;
+      clearInterval(start);
+      submitCorrectAnswer();
+      questionCounter++;
     }
-    //timer countdown
-    function decrement() {
-        $("#timeleft").html("<h3>Time remaining: " + timer + "</h3>");
-        timer --;
-    
-        //stop timer if reach 0
-        if (timer === 0) {
-            unanswerCount++;
-            stop();
-            $("#answerblock").html("<p>Time is up! The correct answer is: " + pick.choice[pick.answer] + "</p>");
-            hidepicture();
-        }	
+  
+    //wrong answer is chosen
+    else {
+      incorrect++;
+      noResponse--;
+      clearInterval(start);
+      submitIncorrectAnswer();
+      questionCounter++;
     }
-    
-    //timer stop
-    function stop() {
-        running = false;
-        clearInterval(intervalId);
+  }
+  //shows questions, if no questions left stops
+  
+  function displayCurrentQuestion () {
+    if (questionCounter >= 9){
+      stop();
     }
-    //randomly pick question in array if not already shown
-    //display question and loop though and display possible answers
-    function displayQuestion() {
-        //generate random index in array
-        index = Math.floor(Math.random()*options.length);
-        pick = options[index];
-    
-    //	if (pick.shown) {
-    //		//recursive to continue to generate new index until one is chosen that has not shown in this game yet
-    //		displayQuestion();
-    //	} else {
-    //		console.log(pick.question);
-            //iterate through answer array and display
-            $("#questionblock").html("<h2>" + pick.question + "</h2>");
-            for(var i = 0; i < pick.choice.length; i++) {
-                var userChoice = $("<div>");
-                userChoice.addClass("answerchoice");
-                userChoice.html(pick.choice[i]);
-                //assign array position to it so can check answer
-                userChoice.attr("data-guessvalue", i);
-                $("#answerblock").append(userChoice);
-    //		}
+    else{
+      console.log(questions[questionCounter].question);
+      $("#question").html(questions[questionCounter].question);
+      $("#buttonA").html(questions[questionCounter].choices[0]);
+      $("#buttonB").html(questions[questionCounter].choices[1]);
+      $("#buttonC").html(questions[questionCounter].choices[2]);
+      $("#buttonD").html(questions[questionCounter].choices[3]);
+      $("#nextQuestion").hide();
     }
+  }
+  //if correct answer is chosen shows response
+  function submitCorrectAnswer () {
+    $("#nextQuestion").show();
+    $("#nextQuestion").html("Next Question");
+    $("#buttonA").hide();
+    $("#buttonB").hide();
+    $("#buttonC").hide();
+    $("#buttonD").hide();
+  
+      var correctAnswerDiv = $("<div>");
+      correctAnswerDiv.html("YahYahYahYahYah! You're Killing it!");
+      $("#question").html(correctAnswerDiv);
+      correctAnswerDiv.attr("class", "answerDisplay");
+  
+  }
+  
+  //if wrong answer is chosen shows response
+  function submitIncorrectAnswer () {
+    $("#nextQuestion").show();
+    $("#nextQuestion").html("Next Question");
+    $("#buttonA").hide();
+    $("#buttonB").hide();
+    $("#buttonC").hide();
+    $("#buttonD").hide();
     
-    
-    
-    //click function to select answer and outcomes
-    $(".answerchoice").on("click", function () {
-        //grab array position from userGuess
-        userGuess = parseInt($(this).attr("data-guessvalue"));
-    
-        //correct guess or wrong guess outcomes
-        if (userGuess === pick.answer) {
-            stop();
-            correctCount++;
-            userGuess="";
-            $("#answerblock").html("<p>Correct!</p>");
-            hidepicture();
-    
-        } else {
-            stop();
-            wrongCount++;
-            userGuess="";
-            $("#answerblock").html("<p>Wrong! The correct answer is: " + pick.choice[pick.answer] + "</p>");
-            hidepicture();
-        }
-    })
-    }
-    
-    
-    function hidepicture () {
-        $("#answerblock").append("<img src=" + pick.photo + ">");
-        newArray.push(pick);
-        options.splice(index,1);
-    
-        var hidpic = setTimeout(function() {
-            $("#answerblock").empty();
-            timer= 20;
-    
-        //run the score screen if all questions answered
-        if ((wrongCount + correctCount + unanswerCount) === qCount) {
-            $("#questionblock").empty();
-            $("#questionblock").html("<h3>Game Over!  Here's how you did: </h3>");
-            $("#answerblock").append("<h4> Correct: " + correctCount + "</h4>" );
-            $("#answerblock").append("<h4> Incorrect: " + wrongCount + "</h4>" );
-            $("#answerblock").append("<h4> Unanswered: " + unanswerCount + "</h4>" );
-            $("#reset").show();
-            correctCount = 0;
-            wrongCount = 0;
-            unanswerCount = 0;
-    
-        } else {
-            runTimer();
-            displayQuestion();
-    
-        }
-        }, 3000);
-    
-    
-    }
-    
-    $("#reset").on("click", function() {
-        $("#reset").hide();
-        $("#answerblock").empty();
-        $("#questionblock").empty();
-        for(var i = 0; i < holder.length; i++) {
-            options.push(holder[i]);
-        }
-        runTimer();
-        displayQuestion();
-    
-    })
-    
-    })
+  
+      var incorrectAnswerDiv = $("<div>");
+      incorrectAnswerDiv.html("Wrong! What was that?! You aint got nothing on me you blond bang kid!");
+      $("#question").html(incorrectAnswerDiv);
+      incorrectAnswerDiv.attr("class", "answerDisplay");
+  
+  }
+  
+  //resets timer and moves to next question
+  function nextQuestion () {
+    number = 30;
+    run();
+  }
+  
+  function stop() {
+    clearInterval(start);
+    $("#buttonA").hide();  
+    $("#buttonB").hide();
+    $("#buttonC").hide();
+    $("#buttonD").hide();
+    $("#start").hide();
+    $("#sumbit").hide();
+    $("#nextQuestion").hide();
+  
+    //updates score screen. Cant seem to get scores to be on different lines. 
+
+    var updateCorrect = "<div>Correct:" + Correct + "</div>";
+    var updateIncorrect = "<div>Incorrect:    " + incorrect + "</div>";
+    var updateNoResponse = "<div>Unanswered:" + noResponse + "</div>";
+  
+    $("#question").html(updateCorrect + updateIncorrect + updateNoResponse);
+  
+
+    //try again button resets game.
+    $("#start").show();
+    $("#start").html("Try again");
+    reset();
+    $("#start").click(run);
+  
+  }
+  
+  function reset() {
+    number = 30;
+    start;
+    displayQuestion = false;
+    Correct = 0;
+    incorrect = 0;
+    noResponse = 9;
+    currentQuestion = 0;
+    questionCounter = 0;
+  }

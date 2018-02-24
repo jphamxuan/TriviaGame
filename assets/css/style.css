@@ -1,32 +1,23 @@
-body {
-	background-color: yellow;
+body{
+    background-image: url("../images/background.png");
+    background-position: center top;
+    background-repeat: no-repeat;
+    background-color: black;
+    color:white;
 }
 
-button {
-	width: 80%;
-	height: 40px;
-	margin: 0 10%;
-	float: left;
+#gameBoard{
+    margin-top: 20px;
+
 }
 
-button.answerchoice {
-	display: none;
+#timer{
+    border-color: white;
+    border-width: thin;
 }
-
-button:hover {
-	background-color: blue;
-	color: white;
+#question{
+    text-align: center;
 }
-
-.answers div {
-	margin: 0 auto;
-}
-
-img {
-	height: 200px;
-	width: auto;
-}
-
-h1, h2, h3, .question {
-	text-align: center;
+.answerDisplay{
+    text-align: center;
 }
